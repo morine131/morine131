@@ -4,11 +4,13 @@ const app = new Vue({
     el: '#app',
     data: {
         checkNumber: 0,
-        check:"素数です"
+        check:"素数です",
+        primeCount: 1,
+        
        
     },
     methods:{
-        //s素数チェック
+        //入力された数字が素数かチェック 
         checkPrime: function(){
                 if(this.checkNumber<2){
                     this.check="素数ではない";
@@ -24,11 +26,43 @@ const app = new Vue({
             this.check="素数です";
         }
     },
+    computed:{
+        //9999までの素数配列
+        primeList: function(){
+            let list = {
+                list:[2],
+                count:1
+            }
+            let primeFlag = true; 
+            //割られる数(i)を10000まで繰り返す
+            for(let i = 3; i<10000;i++){
+                //primeFlagの初期化
+                primeFlag = true;
+                //割る数(n)をiの半分+1まで繰り返す(+1しないと4が入っちゃう)
+                for(let n = 2;n<i/2+1;n++){
+                    //iがnで割り切れた時はフラグをfalseにしてnループを抜ける(次のiループに入る)
+                    if(i % n === 0){
+                        primeFlag = false;
+                        break;
+                    }
+                }
+                //nループで割り切れなかった時に素数リストに加える
+               if(primeFlag){
+                   list.list.push(i);
+                   list.count++;
+               }
+            }
+            
+            return list;
+        }
+    },
+    //watch項目：入力値が変わるたびに素数判定
     watch: {
         checkNumber: function(){
             this.checkPrime()
         }
     },
+    //Vueインスタンスが作られた時に、素数判定
      created: function(){
          this.checkPrime();
      }
