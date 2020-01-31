@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vue.jsで作る電卓</title>
+</head>
+<body>
+    <div id="app">
+    <!-- デバッグ用プロパティ出力コード -->
+    <!-- inputNumberString:{{inputNumberString}}<br>
+    calculating:{{calculating}}<br>
+    rareruNumber:{{rareruNumber}}<br>
+    ruNumber:{{ruNumber}}<br>
+    ruNumber_firstInputFlag:{{ruNumber_firstInput_Flag}}<br> -->
+    
+    <input readonly v-model="displayNumber">{{ operator }}
+    <table>
+        <tr>
+            <td><button v-on:click="clickNumber(7)">7</button></td>
+            <td><button v-on:click="clickNumber(8)">8</button></td>
+            <td><button v-on:click="clickNumber(9)">9</button></td>
+            <td><button v-on:click="clickOperator('/')">/</button></td>
+        </tr>
+        <tr>
+            <td><button v-on:click="clickNumber(4)">4</button></td>
+            <td><button v-on:click="clickNumber(5)">5</button></td>
+            <td><button v-on:click="clickNumber(6)">6</button></td>
+            <td><button v-on:click="clickOperator('-')">-</button></td>
+        </tr>
+        <tr>
+            <td><button v-on:click="clickNumber(1)">1</button></td>
+            <td><button v-on:click="clickNumber(2)">2</button></td>
+            <td><button v-on:click="clickNumber(3)">3</button></td>
+            <td><button v-on:click="clickOperator('+')">+</button></td>
+        </tr>
+        <tr>
+            <td><button v-on:click="clickNumber(0)">0</button></td>
+            <td><button v-on:click="calculate">=</button></td>
+            <td><button v-on:click="clear">C</button></td>
+            <td><button v-on:click="clickOperator('×')">×</button></td>
+        </tr>
+    </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
