@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="main.css">
+    <title>コンポーネントの練習</title>
+</head>
+<body>
+   
+    <div id="app">
+           <monster-comp v-for="monster in monsterList"
+                    v-bind:key="monster.id"
+                    v-bind:monster="monster"
+                    v-on:attack="handleAttack">
+            </monster-comp>
+
+            <item-shop v-for="item in shopList"
+                    v-bind:key="item.id"
+                    v-bind:item="item"
+                    @buy="handleBuy">
+            </item-shop>
+            所持金:{{myMoney}}<br>
+            持ち物
+            <my-items v-for="myitem in myItems"
+                    v-bind:key="myitem.id"
+                    v-bind:myitem="myitem">
+            </my-items>
+        
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
