@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="./test.css">
+</head>
+<body>
+<div id=app>
+西暦<input type="number" v-model="birthYear">年 <input type="number" v-model="birthMonth">月 <input type="number" v-model="birthDay">日<br>
+{{birthYear}}年{{birthMonth}}月{{birthDay}}日生まれのあなた<br>
+干支は、、{{eto}}<br>
+曜日は、、{{youbi}}
+{{date}}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript" src="test.js"></script>
+</body>
+</html>

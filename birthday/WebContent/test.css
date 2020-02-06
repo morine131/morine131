@@ -1,0 +1,19 @@
+@charset "UTF-8";
+.monster-box{
+padding-left:400px;
+
+}
+.player-box{
+padding-top:10px;
+padding-left:100px;
+
+}
+
+.shop-box{
+	float:left;
+}
+
+.inline-block{
+
+
+}
