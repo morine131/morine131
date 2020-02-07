@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Resource driverClassName="org.mariadb.jdbc.Driver"
+		initialSize="10"
+		maxIdle="15"
+		maxTotal="30"
+		maxWaitMillis="-1"
+		name="jdbc/localDB"
+		type="javax.sql.DataSource"
+		url="jdbc:mysql://localhost:3306/teama"
+		username="root"
+		password="password"
+		defaultAutoCommit="false"
+	/>
+</Context>
