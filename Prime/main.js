@@ -7,6 +7,8 @@ const app = new Vue({
         check:"素数です",
         primeCount: 1,
         
+        
+        
        
     },
     methods:{
@@ -24,7 +26,7 @@ const app = new Vue({
                     }  
                  }
             this.check="素数です";
-        }
+        },
     },
     computed:{
         //9999までの素数配列
@@ -54,7 +56,22 @@ const app = new Vue({
             }
             
             return list;
+        },
+        primeList2: function(){
+            let list = [];
+            let count = 0;
+            for(let p = 0 ; p < this.primeList.length;p++){
+             let list10 = [];
+             for(let i=0;i<10;i++){
+                list10.push(this.primeList[count * 10 + i]);
+            }
+            count++;
+            list.push(list10);
         }
+          return list;
+        },
+       
+
     },
     //watch項目：入力値が変わるたびに素数判定
     watch: {

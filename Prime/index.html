@@ -14,13 +14,14 @@
     <div id="app">
     <h2>素数判定</h2>
      素数判定したい数字を入力<input type="number" v-model="checkNumber"><br>
-     判定結果: {{ checkNumber}}　は<span >{{ check }}</span>
+     判定結果: {{ checkNumber　}}　は<span >{{ check }}</span>
                                
      <h2>10000までの素数表</h2>
+     {{ primeList3}}
      {{primeList.count}}個の素数があります
-        <ul>
-            <li v-for="prime in primeList.list">{{ prime }}</li>
-        </ul>
+        
+        <span v-for="prime in primeList.list">{{ prime }},</span>
+        
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="main.js"></script>
