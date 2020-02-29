@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+table {
+	position: relative;
+
+}
+
+/*indexの検索フォーム全体を指定  (外池)*/
+.search-form{
+	position: relative;
+	width: 70% ;
+	background-color: azure;
+	}
+
+/*検索フォームのテーブルの位置を指定  (外池)*/
+.jobsearch-table{
+	position: relative;
+	padding-left:200px;
+}
+/*ゲスト時の検索フォームのぼかしを指定(外池)*/
+.blur{
+	color: transparent;
+  	text-shadow: 0 0 3px #aaa;
+}
+/*tableの下にくるボタンの位置を指定  (外池)*/
+.table-btn{
+	position: relative;
+	margin-left:200px;
+}
+/*インラインブロックのボタンにする (外池)*/
+.inline-btn{
+	position: relative;
+	display: inline-block;
+}
+
+/* 求人入力画面のテーブルを指定 (外池)*/
+.jobinput-form{
+	position: relative;
+	width: 70%;
+}
+/*求人入力テーブルの位置を指定  (外池)*/
+.jobinput-table{
+	position: relative;
+	padding-left:200px;
+}
+/*入力画面の入力ルールのフォントを指定  (外池)*/
+.input-rule{
+	font-size :11px;
+	color:red;
+}
+/*体験談一覧画面の体験談内容表示を指定（高橋） */
+.taikendan {
+	table-layout: fixed;
+	width:100px;
+  	word-wrap: break-word;
+}
+/*体験談一覧画面の体験談内容改行を反映（高橋）*/
+.taikennaiyou{
+	white-space: pre-wrap;
+}
+
+body{
+/* 	background-image: url(vkh0R3VuTph5GMR1578914141_1578914190.png); */
+/* 	background-size: cover; */
+	}
+.navbar-brand1 {
+    float: left;
+    height: 50px;
+    padding: 15px 15px;
+    font-size: 40px ;
+    line-height: 20px;
+
+}
