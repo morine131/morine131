@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h1>CSVインポート</h1>
+        ①日報車輌明細を選択　<input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense">
+        ②日報作業明細を選択<input @change="fileRead1" type="file" id="file_input_expense1" name="file_input_expense1">
+        <!-- <input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense"> -->
+        
+        
+        <li v-for="worker in workers" v-bind:key='worker.id'>
+            {{worker.car_id}}
+            {{worker.car_name}}
+            {{worker.works}}
+        </li>
+      </div>
+<script src="./vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/1.0.30/encoding.min.js"></script>
+<script>
+    var app = new Vue({
+     el: "#app",
+    data:{
+      workers: [],
+    },
+  methods: {
+    fileRead: function(e) {
+      var _this = this;
+      let file = e.target.files[0];
+      let csv = [];
+      let reader = new FileReader();
+
+      reader.onload = function() {
+        let lines = reader.result.split("\n");
+        lines.forEach(element => {
+          let workerData = element.split(",");
+          let worker = {
+            car_id: Encoding.convert(workerData[3],'unicode','SJIS'),
+            car_name : Encoding.convert(workerData[4],'unicode','SJIS'),
+            works : []
+          }
+          csv.push(worker);
+        })
+        const uniqCSV = csv.filter((item, index, array) => {
+            return array.findIndex(item2 => item.car_id === item2.car_id) === index
+        })
+
+        lines.forEach(element => {
+          let workerData = element.split(",");
+          const car_id = Encoding.convert(workerData[3],'unicode','SJIS')
+          uniqCSV.forEach(elem => {
+            if(elem.car_id === car_id){
+                elem.works.push({
+                    driver_id : workerData[1],
+                    driver_name : Encoding.convert(workerData[2], 'unicode', 'SJIS'),
+                    start_time:workerData[7],
+                    finish_time:workerData[8],
+                    work_time:workerData[10]
+                })
+                return true
+            }
+          })
+          
+        })
+
+        _this.workers = uniqCSV;
+      }
+
+
+      reader.readAsBinaryString(file);
+    },
+    fileRead1: function(e) {
+      var _this = this;
+      let file = e.target.files[0];
+      let csv = [];
+      let reader = new FileReader();
+
+      reader.onload = function() {
+        let lines = reader.result.split("\n");
+        lines.forEach( function(element) {
+          let workerData = element.split(",");
+          const driver_id = workerData[0]
+          const start_time = workerData[1]
+          const finish_time = workerData[2]
+          const status = Encoding.convert(workerData[3], 'unicode', 'SJIS') 
+          const point = Encoding.convert(workerData[11], 'unicode', 'SJIS')
+            _this.workers.forEach(data =>{
+                data.works.forEach(elm =>{
+                    console.log(status)
+                    if(elm.driver_id === driver_id &&  elm.start_time === start_time &&  elm.finish_time === finish_time &&  ( status == "\"荷卸\"" || status == "\"荷積\"" )){
+                        console.log(status)
+                        Vue.set(elm, 'point', point)
+                        Vue.set(elm, 'status', status)
+                    }
+                })
+            })
+        })
+      }
+      reader.readAsBinaryString(file);
+    }
+    }
+})
+</script>
+</body>
+</html>
