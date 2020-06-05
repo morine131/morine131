@@ -8,15 +8,15 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="app">
+    <div id="app" >
         <h1>CSVインポート {{target_date}}</h1>
         ①日報車輌明細を選択　<input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense">
         ②日報作業明細を選択<input @change="fileRead1" type="file" id="file_input_expense1" name="file_input_expense1">
         <!-- <input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense"> -->
         
-        <table class="table-hover">
+        <table class="table-hover" v-if="tableShow">
           <tr>
-            <td> 車輌 </td>
+            <td> 車輌＼時刻 </td>
             <td v-for="n in times" colspan="4" class="times_col">
               {{n}}
             </td>
@@ -25,9 +25,10 @@
             <td class="car_name">
               {{worker.car_id}}<br>
               {{worker.car_name}}
+              
             </td>
-            <td v-for="min in mini_times">
-              {{min}}
+            <td v-for=" card in worker.array" class="mini_cell" :colspan="card.mini_time_width">
+              {{card.driver_name}}
             </td>
           </tr>
         </table>
@@ -42,6 +43,7 @@
       times : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,1],
       workers: [],
       target_date : null,
+      tableShow : false,
     },
     computed : {
       mini_times : function(){
@@ -136,10 +138,10 @@
         date --
       }
       _this.target_date = date
-
+      //変更目標
       // 各データの開始時刻と終了時刻と2つの差（time_width）をmini_timesに変換してオブジェクトにsetする
-      _this.workers.forEach(element =>{
-        element.works.forEach(elm =>{
+      _this.workers.forEach(worker =>{
+        worker.works.forEach(elm =>{
           //mini_finish_timeの計算
           let mini_finish_time = 0
           let fTime = Number( elm.finish_time.substring( elm.finish_time.indexOf(" ")+1, elm.finish_time.indexOf(":")) )
@@ -171,7 +173,34 @@
           Vue.set(elm, 'mini_start_time', mini_start_time)
           Vue.set(elm, 'mini_finish_time', mini_finish_time)
         })
+          let array = []
+          let i = 0
+          while(i < 96){
+            let notPushed = true
+            worker.works.forEach(elm => {
+              if(elm.mini_start_time == i){
+                array.push({
+                  mini_time_width : elm.mini_time_width,
+                  driver_name : elm.driver_name,
+                })
+                i += elm.mini_time_width
+                notPushed = false
+              }
+            })
+            if(notPushed){
+              array.push({
+                  mini_time_width : 1,
+                  driver_name : "　",
+                })
+                i ++
+            }
+          }
+          worker.array = array
+          _this.tableShow = true
+       
       })
+      _this.workers.shift()
+      _this.workers.pop()
     },
     }
 })
