@@ -1,0 +1,16 @@
+@charset "UTF-8";
+table {
+    border-collapse: collapse;
+  }
+  table th, table td {
+    border: solid 1px black;
+    /*実線 1px 黒*/
+  }
+
+.car_name{
+    width: 100px;
+    font-size: 2px;
+}
+.times_col{
+    width: 48px;
+}

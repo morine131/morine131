@@ -3,21 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./stylesheet.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     <title>Document</title>
 </head>
 <body>
     <div id="app">
-        <h1>CSVインポート</h1>
+        <h1>CSVインポート {{target_date}}</h1>
         ①日報車輌明細を選択　<input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense">
         ②日報作業明細を選択<input @change="fileRead1" type="file" id="file_input_expense1" name="file_input_expense1">
         <!-- <input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense"> -->
         
+        <table class="table-hover">
+          <tr>
+            <td> 車輌 </td>
+            <td v-for="n in times" colspan="4" class="times_col">
+              {{n}}
+            </td>
+          </tr>
+          <tr v-for="worker in workers" v-bind:key='worker.id'>
+            <td class="car_name">
+              {{worker.car_id}}<br>
+              {{worker.car_name}}
+            </td>
+            <td v-for="min in mini_times">
+              {{min}}
+            </td>
+          </tr>
+        </table>
         
-        <li v-for="worker in workers" v-bind:key='worker.id'>
-            {{worker.car_id}}
-            {{worker.car_name}}
-            {{worker.works}}
-        </li>
       </div>
 <script src="./vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/1.0.30/encoding.min.js"></script>
@@ -25,7 +39,18 @@
     var app = new Vue({
      el: "#app",
     data:{
+      times : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,1],
       workers: [],
+      target_date : null,
+    },
+    computed : {
+      mini_times : function(){
+        let array = []
+          for(let i = 1;i<=96 ; i++){
+            array.push(i)
+          }
+        return array
+      }
     },
   methods: {
     fileRead: function(e) {
@@ -84,15 +109,13 @@
         lines.forEach( function(element) {
           let workerData = element.split(",");
           const driver_id = workerData[0]
-          const start_time = workerData[1]
-          const finish_time = workerData[2]
+          const start_time = (workerData[1], 'unicode', 'SJIS') 
+          const finish_time = (workerData[2], 'unicode', 'SJIS') 
           const status = Encoding.convert(workerData[3], 'unicode', 'SJIS') 
           const point = Encoding.convert(workerData[11], 'unicode', 'SJIS')
             _this.workers.forEach(data =>{
                 data.works.forEach(elm =>{
-                    console.log(status)
                     if(elm.driver_id === driver_id &&  elm.start_time === start_time &&  elm.finish_time === finish_time &&  ( status == "\"荷卸\"" || status == "\"荷積\"" )){
-                        console.log(status)
                         Vue.set(elm, 'point', point)
                         Vue.set(elm, 'status', status)
                     }
@@ -101,7 +124,55 @@
         })
       }
       reader.readAsBinaryString(file);
-    }
+
+      //表の中心となる日付を求める
+      let baseTime = _this.workers[1].works[0].finish_time
+      let timeStr = baseTime.substring(baseTime.indexOf(" ")+1,baseTime.indexOf(":"))
+      let ind = baseTime.indexOf('/', baseTime.indexOf('/') + 1)+1
+      let dateStr = baseTime.substring(ind,baseTime.indexOf(" "))
+      const time = Number(timeStr)
+      let date = Number(dateStr)
+      if (time <= 0 && time < 2){
+        date --
+      }
+      _this.target_date = date
+
+      // 各データの開始時刻と終了時刻と2つの差（time_width）をmini_timesに変換してオブジェクトにsetする
+      _this.workers.forEach(element =>{
+        element.works.forEach(elm =>{
+          //mini_finish_timeの計算
+          let mini_finish_time = 0
+          let fTime = Number( elm.finish_time.substring( elm.finish_time.indexOf(" ")+1, elm.finish_time.indexOf(":")) )
+          let fMinute = Number( elm.finish_time.substring( elm.finish_time.indexOf(":")+1, elm.finish_time.indexOf(":")+3) )
+          if(fTime < 2){
+            fTime += 24
+          }
+          mini_finish_time += (fTime-2) * 4
+          mini_finish_time += 　Math.floor(　(fMinute+15)　 / 15)　
+
+          //mini_start_timeの計算
+          let mini_start_time = 0
+          let sTime = Number( elm.start_time.substring( elm.start_time.indexOf(" ")+1, elm.start_time.indexOf(":")) )
+          let sMinute = Number( elm.start_time.substring( elm.start_time.indexOf(":")+1, elm.start_time.indexOf(":")+3) )
+          let s_ind = elm.start_time.indexOf('/', elm.start_time.indexOf('/') + 1)+1
+          let s_dateStr = elm.start_time.substring(s_ind,elm.start_time.indexOf(" "))
+          let s_date = Number( s_dateStr )
+          if(sTime < 2){
+            sTime += 24
+          }
+          mini_start_time += (sTime -2) * 4
+          mini_start_time += 　Math.floor( (sMinute+15)/ 15)　
+          if(s_date < _this.target_date ){//target_dateより前日の開始は0
+            mini_start_time = 0
+          }
+          const mini_time_width = mini_finish_time - mini_start_time
+
+          Vue.set(elm, 'mini_time_width', mini_time_width)
+          Vue.set(elm, 'mini_start_time', mini_start_time)
+          Vue.set(elm, 'mini_finish_time', mini_finish_time)
+        })
+      })
+    },
     }
 })
 </script>
