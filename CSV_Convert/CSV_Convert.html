@@ -12,7 +12,7 @@
         <h1>CSVインポート {{target_date}}</h1>
         ①日報車輌明細を選択　<input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense">
         ②日報作業明細を選択<input @change="fileRead1" type="file" id="file_input_expense1" name="file_input_expense1">
-        <!-- <input @change="fileRead" type="file" id="file_input_expense" name="file_input_expense"> -->
+        ③<input type="button" value="変換"　@click="delay_methods">
         
         <table class="table-hover" v-if="tableShow">
           <tr>
@@ -28,7 +28,11 @@
               
             </td>
             <td v-for=" card in worker.array" class="mini_cell" :colspan="card.mini_time_width">
-              {{card.driver_name}}
+              {{card.driver_name}}<br>
+              {{card.load_points}}<br>
+              {{card.unload_points}}<br>
+              {{card.start_time}}<br>
+              {{card.finish_time}}
             </td>
           </tr>
         </table>
@@ -66,8 +70,8 @@
         lines.forEach(element => {
           let workerData = element.split(",");
           let worker = {
-            car_id: Encoding.convert(workerData[3],'unicode','SJIS'),
-            car_name : Encoding.convert(workerData[4],'unicode','SJIS'),
+            car_id: Encoding.convert(workerData[3],'unicode','SJIS').slice(0,-1).slice(1),
+            car_name : Encoding.convert(workerData[4],'unicode','SJIS').slice(0,-1).slice(1),
             works : []
           }
           csv.push(worker);
@@ -78,15 +82,17 @@
 
         lines.forEach(element => {
           let workerData = element.split(",");
-          const car_id = Encoding.convert(workerData[3],'unicode','SJIS')
+          const car_id = Encoding.convert(workerData[3],'unicode','SJIS').slice(0,-1).slice(1)
           uniqCSV.forEach(elem => {
             if(elem.car_id === car_id){
                 elem.works.push({
-                    driver_id : workerData[1],
-                    driver_name : Encoding.convert(workerData[2], 'unicode', 'SJIS'),
-                    start_time:workerData[7],
-                    finish_time:workerData[8],
-                    work_time:workerData[10]
+                    driver_id : Encoding.convert(workerData[1], 'unicode', 'SJIS').slice(0,-1).slice(1) ,
+                    driver_name : Encoding.convert(workerData[2], 'unicode', 'SJIS').slice(0,-1).slice(1),
+                    start_time:Encoding.convert(workerData[7], 'unicode', 'SJIS').slice(0,-1) .slice(1),
+                    finish_time:Encoding.convert(workerData[8], 'unicode', 'SJIS').slice(0,-1).slice(1) ,
+                    work_time:Encoding.convert(workerData[10], 'unicode', 'SJIS').slice(0,-1).slice(1) ,
+                    load_points : "",
+                    unload_points : ""
                 })
                 return true
             }
@@ -110,16 +116,19 @@
         let lines = reader.result.split("\n");
         lines.forEach( function(element) {
           let workerData = element.split(",");
-          const driver_id = workerData[0]
-          const start_time = (workerData[1], 'unicode', 'SJIS') 
-          const finish_time = (workerData[2], 'unicode', 'SJIS') 
-          const status = Encoding.convert(workerData[3], 'unicode', 'SJIS') 
-          const point = Encoding.convert(workerData[11], 'unicode', 'SJIS')
+          const driver_id = Encoding.convert(workerData[0], 'unicode', 'SJIS').slice(0,-1).slice(1)
+          const start_time = Encoding.convert(workerData[1], 'unicode', 'SJIS') .slice(0,-1).slice(1)
+          const finish_time = Encoding.convert(workerData[2], 'unicode', 'SJIS') .slice(0,-1).slice(1)
+          const status = Encoding.convert(workerData[3], 'unicode', 'SJIS') .slice(0,-1).slice(1)
+          const point = Encoding.convert(workerData[11], 'unicode', 'SJIS').slice(0,-1).slice(1)
             _this.workers.forEach(data =>{
                 data.works.forEach(elm =>{
-                    if(elm.driver_id === driver_id &&  elm.start_time === start_time &&  elm.finish_time === finish_time &&  ( status == "\"荷卸\"" || status == "\"荷積\"" )){
-                        Vue.set(elm, 'point', point)
-                        Vue.set(elm, 'status', status)
+                    if(elm.driver_id === driver_id &&  elm.start_time === start_time &&  elm.finish_time === finish_time &&  (status == "荷卸" || status == "荷積") ){
+                        if(status == "荷卸"){
+                          elm.unload_points += point + " "
+                        }else{
+                          elm.load_points += point + " "
+                        }
                     }
                 })
             })
@@ -138,10 +147,86 @@
         date --
       }
       _this.target_date = date
-      //変更目標
-      // 各データの開始時刻と終了時刻と2つの差（time_width）をmini_timesに変換してオブジェクトにsetする
-      _this.workers.forEach(worker =>{
+
+      _this.workers.shift()
+      _this.workers.pop()
+
+      // // 各データの開始時刻と終了時刻と2つの差（time_width）をmini_timesに変換してオブジェクトにsetする
+      // _this.workers.forEach(worker =>{
+      //   worker.works.forEach(elm =>{
+          
+
+      //     //mini_finish_timeの計算
+      //     let mini_finish_time = 0
+      //     let fTime = Number( elm.finish_time.substring( elm.finish_time.indexOf(" ")+1, elm.finish_time.indexOf(":")) )
+      //     let fMinute = Number( elm.finish_time.substring( elm.finish_time.indexOf(":")+1, elm.finish_time.indexOf(":")+3) )
+      //     if(fTime < 2){
+      //       fTime += 24
+      //     }
+      //     mini_finish_time += (fTime-2) * 4
+      //     mini_finish_time += 　Math.floor(　(fMinute+15)　 / 15)　
+
+      //     //mini_start_timeの計算
+      //     let mini_start_time = 0
+      //     let sTime = Number( elm.start_time.substring( elm.start_time.indexOf(" ")+1, elm.start_time.indexOf(":")) )
+      //     let sMinute = Number( elm.start_time.substring( elm.start_time.indexOf(":")+1, elm.start_time.indexOf(":")+3) )
+      //     let s_ind = elm.start_time.indexOf('/', elm.start_time.indexOf('/') + 1)+1
+      //     let s_dateStr = elm.start_time.substring(s_ind,elm.start_time.indexOf(" "))
+      //     let s_date = Number( s_dateStr )
+      //     if(sTime < 2){
+      //       sTime += 24
+      //     }
+      //     mini_start_time += (sTime -2) * 4
+      //     mini_start_time += 　Math.floor( (sMinute+15)/ 15)　
+      //     if(s_date < _this.target_date ){//target_dateより前日の開始は0
+      //       mini_start_time = 0
+      //     }
+      //     const mini_time_width = mini_finish_time - mini_start_time
+
+      //     Vue.set(elm, 'mini_time_width', mini_time_width)
+      //     Vue.set(elm, 'mini_start_time', mini_start_time)
+      //     Vue.set(elm, 'mini_finish_time', mini_finish_time)
+      //   })
+
+
+      //     let array = []
+      //     let i = 0
+      //     while(i < 96){
+      //       let notPushed = true
+      //       worker.works.forEach(elm => {
+      //         if(elm.mini_start_time == i){
+      //           array.push({
+      //             mini_time_width : elm.mini_time_width,
+      //             driver_name : elm.driver_name,
+      //             load_points : elm.load_points,
+      //             unload_points : elm.unload_points,
+      //             start_time :elm.start_time,
+      //             finish_time : elm.finish_time
+      //           })
+      //           i += elm.mini_time_width
+      //           notPushed = false
+      //         }
+      //       })
+      //       if(notPushed){
+      //         array.push({
+      //             mini_time_width : 1,
+      //             driver_name : "　",
+      //           })
+      //           i ++
+      //       }
+      //     }
+      //     worker.array = array
+      //     _this.tableShow = true
+       
+      // })
+    },
+    delay_methods : function(){
+      const _this = this
+       // 各データの開始時刻と終了時刻と2つの差（time_width）をmini_timesに変換してオブジェクトにsetする
+       _this.workers.forEach(worker =>{
         worker.works.forEach(elm =>{
+          
+
           //mini_finish_timeの計算
           let mini_finish_time = 0
           let fTime = Number( elm.finish_time.substring( elm.finish_time.indexOf(" ")+1, elm.finish_time.indexOf(":")) )
@@ -173,6 +258,8 @@
           Vue.set(elm, 'mini_start_time', mini_start_time)
           Vue.set(elm, 'mini_finish_time', mini_finish_time)
         })
+
+
           let array = []
           let i = 0
           while(i < 96){
@@ -182,6 +269,10 @@
                 array.push({
                   mini_time_width : elm.mini_time_width,
                   driver_name : elm.driver_name,
+                  load_points : elm.load_points,
+                  unload_points : elm.unload_points,
+                  start_time :elm.start_time,
+                  finish_time : elm.finish_time
                 })
                 i += elm.mini_time_width
                 notPushed = false
@@ -199,9 +290,7 @@
           _this.tableShow = true
        
       })
-      _this.workers.shift()
-      _this.workers.pop()
-    },
+    }
     }
 })
 </script>
