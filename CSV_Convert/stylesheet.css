@@ -1,7 +1,35 @@
 @charset "UTF-8";
+body{
+    
+}
+.buttons{
+    width:1000px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+.car_detail_div{
+    display: inline-block;
+    height: 60px;
+}
+.car_work_div{
+    display: inline-block;
+}
+.convert_div{
+    display: inline-block;
+    text-align: center;
+}
+.reset_div{
+    display: inline-block;
+    padding-left: 100px;
+}
 table {
     border-collapse: collapse;
     table-layout: fixed;
+    width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
   }
   table th, table td {
     border: solid 1px black;
@@ -9,18 +37,74 @@ table {
   }
 
 .car_name{
-    width: 100px;
-    height:50px;
-    font-size: 3px;
+    width: 120px;
+    height:100px;
+    font-size: 13px;
+    text-align: center;
 }
 .times_col{
     width: 48px;
+    text-align: center;
 }
 .mini_cell{
     width : 12px;
-    font-size: 2px;
+    font-size: 10px;
+    border-left: solid 1px #c0c0c0;
+    border-right: solid 1px #c0c0c0;
+    border-top: solid 1px black;
+    border-bottom: solid 1px black;
 }
-.work_card{
-    width:200px;
-    background-color: brown;
+.scale{
+    color:#c0c0c0;
+    text-align: center;
+}
+.card{
+    height:100px;
+    position: relative;
+    border-left: solid 1px black;
+    border-right: solid 1px black;
+}
+.driver_name {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    font-size: 11px;
+    background-color: #ffff99;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+}
+.load_points {
+    position: absolute;
+    font-size: 11px;
+    right: 0;
+    bottom: 0;
+    font-weight: bold;
+    background-color: #ffe0f0;
+}
+.unload_points {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 11px;
+    font-weight: bold;
+    background-color: lightcyan;
+}
+
+.start_time {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 13px;
+    font-weight: bold;
+    background-color: lightcyan;
+}
+.finish_time {
+    position: absolute;
+    font-size: 13px;
+    right: 0;
+    bottom: 0;
+    font-weight: bold;
+    background-color: #ffe0f0;
 }
